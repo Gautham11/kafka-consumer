@@ -1,6 +1,5 @@
 package com.example.kafkaconsumer.service;
 
-import encryption.aes.AESEncryptionAndDecryptionKeys;
 import encryption.aes.AESEncryptionAndDecryptionService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -38,8 +37,8 @@ public class KafkaConsumerService {
     )
     public void consume(ConsumerRecord<String, String> record) throws InvalidAlgorithmParameterException, IllegalBlockSizeException, NoSuchPaddingException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException {
         var headerMaps = headersToMap(record.headers());
-        String encryptedKey = headerMaps.get(AESEncryptionAndDecryptionKeys.ENCRYPTION_KEY_CIPHER_TEXT.getKey());
-        String transitKeyName = headerMaps.get(AESEncryptionAndDecryptionKeys.ENCRYPTION_KEY_NAME.getKey());
+        String encryptedKey = headerMaps.get("encryption-key-cipher-text");
+        String transitKeyName = headerMaps.get("encryption-key-name");
         String messageValueAsString = aesEncryptionAndDecryptionService.decrypt(record.value(), encryptedKey, transitKeyName);
         logger.info("Received message: Key = {}, Value = {}", record.key(), messageValueAsString);
     }
